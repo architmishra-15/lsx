@@ -7,8 +7,9 @@ import "fmt"
 func showHelp() {
 	fmt.Println("Usage: myls [options] [path]")
 	fmt.Println("Options:")
-	fmt.Println("  -h, --help  Show this help message")
-	fmt.Println("  [path]      Path to list (default: current directory)")
+	fmt.Println("  -v, --version           Show version")
+	fmt.Println("  -h, --help              Show this help message")
+	fmt.Println("  [path]      	          Path to list (default: current directory)")
 	fmt.Println()
 	fmt.Println("Pattern matching:")
 	fmt.Println("  *.extension             List files with extension")
@@ -22,3 +23,4 @@ func showHelp() {
 	fmt.Println("  myls /var/log/*.log")
 	fmt.Println("  myls /etc/passwd")
 }
+

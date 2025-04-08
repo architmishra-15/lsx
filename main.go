@@ -18,6 +18,10 @@ func main() {
 		if args[1] == "-h" || args[1] == "--help" {
 			showHelp()
 			return
+		} else if args[1] == "-v" || args[1] == "--version" {
+			fmt.Println("Version 1.0.0")
+			fmt.Println("© 2025 Archit Mishra")
+			return
 		}
 	}
 
