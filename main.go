@@ -14,20 +14,13 @@ func main() {
 	args := os.Args
 
 	// Handle flags
-	if len(args) > 1 {
-		if args[1] == "-h" || args[1] == "--help" {
-			showHelp()
-			return
-		} else if args[1] == "-v" || args[1] == "--version" {
-			fmt.Println("Version 1.0.0")
-			fmt.Println("© 2025 Archit Mishra")
-			return
-		}
-	}
+	flags, remainingArgs := handle_flag(args)
 
+	// Determine the path to process - use the first non-flag argument if it exists
+	// otherwise use the current directory
 	var path string
-	if len(args) > 1 {
-		path = args[1]
+	if len(remainingArgs) > 1 { // Skip program name (index 0)
+		path = remainingArgs[1]
 	} else {
 		path = "."
 	}
@@ -35,19 +28,25 @@ func main() {
 	// Checking if the provided path is a directory
 	fileInfo, err := os.Stat(path)
 	if err == nil && fileInfo.IsDir() {
-		// It's a directory, print its contents
-		printDirectoryContents(path)
+		// If -d flag is set, print the directory entry itself, not its contents
+		if flags.DirectoryOnly {
+			fileInfos := []os.FileInfo{fileInfo}
+			PrintFilesInColumns(fileInfos, 1)
+		} else {
+			// It's a directory, print its contents
+			printDirectoryContents(path, flags)
+		}
 	} else {
 		// It's not a directory or there's an error, handle as pattern
-		processPath(path)
+		processPath(path, flags)
 	}
 }
 
-func processPath(pattern string) {
+func processPath(pattern string, flags Flags) {
 	// 1. Handle `*.extension`
 	if strings.HasPrefix(pattern, "*.") {
 		ext := strings.TrimPrefix(pattern, "*")
-		printFilesWithExtension(".", ext)
+		printFilesWithExtension(".", ext, flags)
 		return
 	}
 
@@ -56,7 +55,7 @@ func processPath(pattern string) {
 	if len(parts) > 1 && strings.HasSuffix(parts[len(parts)-1], ".*") {
 		path := strings.Join(parts[:len(parts)-1], "/")
 		ext := strings.TrimPrefix(parts[len(parts)-1], "*")
-		printFilesWithExtension(path, ext)
+		printFilesWithExtension(path, ext, flags)
 		return
 	}
 
@@ -65,7 +64,7 @@ func processPath(pattern string) {
 	_, err := os.Stat(pattern)
 	if err == nil {
 		// If exists, print it
-		printFile(pattern)
+		printFile(pattern, flags)
 		return
 	} else if os.IsNotExist(err) {
 		// If doesn't exist
@@ -81,7 +80,7 @@ func processPath(pattern string) {
 	fmt.Println("Error: No such file or directory:", pattern)
 }
 
-func printFilesWithExtension(dirPath string, ext string) {
+func printFilesWithExtension(dirPath string, ext string, flags Flags) {
 	dirEntries, err := os.ReadDir(dirPath)
 	if err != nil {
 		log.Fatal(err)
@@ -98,18 +97,18 @@ func printFilesWithExtension(dirPath string, ext string) {
 		}
 		fileInfos = append(fileInfos, info)
 	}
-	PrintFilesInColumns(fileInfos, 5)
+	PrintFilesInColumns(fileInfos, 5, flags)
 }
 
-func printFile(filePath string) {
+func printFile(filePath string, flags Flags) {
 	fileInfo, err := os.Stat(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	PrintFilesInColumns([]os.FileInfo{fileInfo}, 1)
+	PrintFilesInColumns([]os.FileInfo{fileInfo}, 1, flags)
 }
 
-func printDirectoryContents(dirPath string) {
+func printDirectoryContents(dirPath string, flags Flags) {
 	dirEntries, err := os.ReadDir(dirPath)
 	if err != nil {
 		log.Fatal(err)
@@ -117,8 +116,8 @@ func printDirectoryContents(dirPath string) {
 
 	fileInfos := make([]os.FileInfo, 0)
 	for _, entry := range dirEntries {
-		// Skip dotfiles - files that start with a dot
-		if strings.HasPrefix(entry.Name(), ".") {
+		// Skip dotfiles - files that start with a dot - unless -a flag is set
+		if strings.HasPrefix(entry.Name(), ".") && !flags.AllFiles {
 			continue
 		}
 		info, err := entry.Info()
@@ -127,5 +126,13 @@ func printDirectoryContents(dirPath string) {
 		}
 		fileInfos = append(fileInfos, info)
 	}
-	PrintFilesInColumns(fileInfos, 5)
+
+	// For long format, use only 1 column
+	columns := 5
+	if flags.LongFormat {
+		columns = 1
+	}
+
+	// Make sure to pass the flags
+	PrintFilesInColumns(fileInfos, columns, flags)
 }

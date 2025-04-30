@@ -4,11 +4,11 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
 	"unicode/utf8"
-	"math"
 )
 
 // check if a file is a framework config file
@@ -30,8 +30,20 @@ func isConfigFile(name string) string {
 }
 
 // displays file information with icons and type-based colors in a multi-column layout
-func PrintFilesInColumns(files []os.FileInfo, numColumns int) {
+func PrintFilesInColumns(files []os.FileInfo, numColumns int, flags ...Flags) {
 	if len(files) == 0 {
+		return
+	}
+
+	// Check if we have flag info
+	var flagsInfo Flags
+	if len(flags) > 0 {
+		flagsInfo = flags[0]
+	}
+
+	// If using long format, handle differently
+	if flagsInfo.LongFormat {
+		printLongFormat(files, flagsInfo.HumanReadable)
 		return
 	}
 
@@ -182,8 +194,5 @@ func PrintFilesInColumns(files []os.FileInfo, numColumns int) {
 			}
 			fmt.Print("\n")
 		}
-
-		// Extra line break between rows
-		fmt.Print("\n")
 	}
 }
