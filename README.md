@@ -8,6 +8,8 @@ One of the main reasons and feature of this rewrite is the icon support in files
 
 ## Requirements
 
-- Nerd Font
+- [Nerd Font](https://www.nerdfonts.com/)
 - A modern POSIX terminal like `iterm2`, `Alacritty`, `WezTerm`, `Kitty` or `Ghostty` etc.
+
+## Demo
 

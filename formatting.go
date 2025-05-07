@@ -154,9 +154,9 @@ func getColorForFileType(ext string) string {
 		switch ext {
 		case ".java", ".go", ".jsx":
 			return Color["cyan"]
-		case ".py", ".asm", ".dart":
+		case ".c", ".py", ".asm", ".dart":
 			return Color["bright_blue"]
-		case ".rs":
+		case ".swift", ".rs":
 			return Color["yellow"]
 		case ".js", ".lock":
 			return Color["bright_yellow"]
@@ -164,7 +164,7 @@ func getColorForFileType(ext string) string {
 			return Color["blue"]
 		case ".kt":
 			return Color["red"]
-		case ".c", ".cpp", ".cs":
+		case ".cpp", ".cs":
 			return Color["bright_green"]
 		case ".rb":
 			return Color["bright_red"]
