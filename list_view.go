@@ -9,9 +9,9 @@ import (
 	"strings"
 )
 
-// PrintListView displays files in Unix-like ls -l format
+// Display files in Unix-like ls -l format
 func PrintListView(files []os.FileInfo, flags Flags) {
-	// Calculate total blocks (typically in 1K blocks on Unix)
+
 	totalBlocks := calculateTotalBlocks(files)
 
 	// Print total line (Unix ls compatibility)
@@ -21,16 +21,14 @@ func PrintListView(files []os.FileInfo, flags Flags) {
 		fmt.Printf("total %d\n", totalBlocks)
 	}
 
-	// Find the maximum length for size field to ensure alignment
 	maxSizeLen := findMaxSizeLength(files, flags.HumanReadable)
 
-	// Now print each file in long format
 	for _, file := range files {
 		printFileListView(file, maxSizeLen, flags.HumanReadable)
 	}
 }
 
-// calculateTotalBlocks calculates the total blocks used by files
+// calculateTotalBlocks calculates the total blocks used by files.
 // On Unix, this is typically in 1K blocks
 func calculateTotalBlocks(files []os.FileInfo) int64 {
 	var totalSize int64
@@ -42,7 +40,7 @@ func calculateTotalBlocks(files []os.FileInfo) int64 {
 	return (totalSize + 1023) / 1024
 }
 
-// findMaxSizeLength finds the maximum string length of file sizes
+// finds the maximum string length of file sizes
 func findMaxSizeLength(files []os.FileInfo, humanReadable bool) int {
 	maxLen := 0
 	for _, file := range files {
@@ -62,28 +60,27 @@ func findMaxSizeLength(files []os.FileInfo, humanReadable bool) int {
 	return maxLen
 }
 
-// getOwnerAndGroup attempts to get the owner and group of a file
+// attempts to get the owner and group of a file
 func getOwnerAndGroup(file os.FileInfo) (string, string) {
 	// For simplicity on Windows, just return generic owner/group
-	// On Unix-like systems, you would extract this from the stat structure
+
 	return "user", "group"
 }
 
-// getLinkCount gets the number of hard links (simplified for Windows)
+// gets the number of hard links (simplified for Windows)
 func getLinkCount(file os.FileInfo) int {
 	// On Windows, this concept doesn't directly map the same as in Unix
-	// For directories, we'll show 2+ to match Unix behavior
 	if file.IsDir() {
-		return 2 // Simplified - in reality would count subdirectories
+		return 2
 	}
-	return 1 // Regular files typically have 1 link in Windows
+	return 1
 }
 
-// printFileListView prints a single file in ls -l format
+// print a single file in ls -l format
 func printFileListView(file os.FileInfo, maxSizeLen int, humanReadable bool) {
 	// Debug output
 	// fmt.Println("Debug: PrintListView is being called!")
-	// Format permissions - For Windows, we'll simulate Unix-style permissions
+	// Format permissions - For Windows; simulating Unix-style permissions
 	mode := file.Mode()
 	// Default Unix-style permission format
 	perms := "-"

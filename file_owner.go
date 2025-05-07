@@ -7,7 +7,7 @@ import (
 
 // getFileOwner returns the owner and group of a file
 func getFileOwner(filePath string) (string, string) {
-	// For simplicity, just use the current user
+	// In Windows, for simplicity, just use the current user as owner & group.
 	username := getCurrentUsername()
 	return username, username
 }

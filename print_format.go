@@ -1,4 +1,4 @@
-// file_printer.go
+// print_format.go
 
 package main
 
@@ -11,7 +11,7 @@ import (
 	"unicode/utf8"
 )
 
-// check if a file is a framework config file
+// check for a framework config file
 func isConfigFile(name string) string {
 	switch name {
 	case "tailwind.config.js":
@@ -29,13 +29,13 @@ func isConfigFile(name string) string {
 	}
 }
 
-// displays file information with icons and type-based colors in a multi-column layout
+// display file information with icons and type-based colors
 func PrintFilesInColumns(files []os.FileInfo, numColumns int, flags ...Flags) {
 	if len(files) == 0 {
 		return
 	}
 
-	// Check if we have flag info
+	// Check if flag info is available
 	var flagsInfo Flags
 	if len(flags) > 0 {
 		flagsInfo = flags[0]
@@ -56,7 +56,6 @@ func PrintFilesInColumns(files []os.FileInfo, numColumns int, flags ...Flags) {
 		for row := 0; row < numRows; row++ {
 			idx := row + col*numRows
 			if idx < len(files) {
-				// Account for the file name length
 				nameWidth := utf8.RuneCountInString(files[idx].Name())
 				if nameWidth > maxFilenameWidth {
 					nameWidth = maxFilenameWidth
@@ -70,14 +69,13 @@ func PrintFilesInColumns(files []os.FileInfo, numColumns int, flags ...Flags) {
 
 	// Print files in rows with icons and colors
 	for row := 0; row < numRows; row++ {
-		// Track if any file in this row has a long name
+		// Look for long filenames
 		hasLongName := false
 		mainContent := make([]string, numColumns)
 		overflowContent := make([]string, numColumns)
 		iconColors := make([]string, numColumns)
 		icons := make([]string, numColumns)
 
-		// Prepare content for this row
 		for col := 0; col < numColumns; col++ {
 			idx := row + col*numRows
 			if idx < len(files) {
@@ -89,7 +87,7 @@ func PrintFilesInColumns(files []os.FileInfo, numColumns int, flags ...Flags) {
 				// Check for framework config files
 				frameworkIcon := isConfigFile(name)
 				if frameworkIcon != "" {
-					iconColors[col] = Color["yellow"] // Or any color you want for framework icons
+					iconColors[col] = Color["cyan"] // color for framework icons
 					icons[col] = Icons[frameworkIcon]
 				} else {
 					// Get icon and color based on file type
@@ -105,7 +103,7 @@ func PrintFilesInColumns(files []os.FileInfo, numColumns int, flags ...Flags) {
 
 				// Handle .gitignore and .gitattributes as dotfiles
 				if name == ".gitignore" || name == ".gitattributes" {
-					icons[col] = Icons[name] // Assuming Icons[".gitignore"] and Icons[".gitattributes"] exist
+					icons[col] = Icons[name]
 				}
 
 				// Handle long filenames
@@ -140,7 +138,7 @@ func PrintFilesInColumns(files []os.FileInfo, numColumns int, flags ...Flags) {
 				fileDisplay := fmt.Sprintf("%s%s %s%s",
 					colorCode,
 					icon,
-					Color["white"]+name, // Filename in white
+					Color["white"]+name,
 					Color["reset"],
 				)
 

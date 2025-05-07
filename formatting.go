@@ -13,13 +13,13 @@ import (
 // Maximum width for a filename before wrapping
 const maxFilenameWidth = 20
 
-// PrintInColumns prints a string slice in the specified number of columns with improved spacing
+// print a string slice in the specified number of columns with improved spacing
 func PrintInColumns(items []string, numColumns int) {
 	if len(items) == 0 {
 		return
 	}
 
-	// Calculate how many rows we need
+	// Calculate how many rows are needed
 	numRows := int(math.Ceil(float64(len(items)) / float64(numColumns)))
 
 	// Find the maximum width needed for each column
@@ -31,7 +31,7 @@ func PrintInColumns(items []string, numColumns int) {
 				// Get the display width of the string (handling multi-byte characters)
 				displayWidth := utf8.RuneCountInString(items[idx])
 				if displayWidth > maxFilenameWidth {
-					displayWidth = maxFilenameWidth // Cap width for long filenames
+					displayWidth = maxFilenameWidth
 				}
 				if displayWidth > columnWidths[col] {
 					columnWidths[col] = displayWidth
@@ -40,14 +40,12 @@ func PrintInColumns(items []string, numColumns int) {
 		}
 	}
 
-	// Print items in rows with increased spacing
 	for row := 0; row < numRows; row++ {
 		// Track if any item in this row needs an extra line
 		needsExtraLine := false
 		rowContent := make([]string, numColumns)
 		overflowContent := make([]string, numColumns)
 
-		// Prepare content for this row
 		for col := 0; col < numColumns; col++ {
 			idx := row + col*numRows
 			if idx < len(items) {
@@ -104,7 +102,7 @@ func PrintInColumns(items []string, numColumns int) {
 				} else if col < numColumns-1 {
 					// Empty cell but need padding
 					fmt.Print(strings.Repeat(" ", columnWidths[col]+4))
-				} 
+				}
 			}
 			fmt.Print("\n")
 		}
@@ -128,30 +126,26 @@ func getFileTypeColorAndIcon(file os.FileInfo, ext string, isDir bool) (string, 
 
 	name := file.Name()
 	switch name {
-		case "go.mod", "go.sum":
-			return Color["cyan"], Icons["go.mod"]
-		case "package.json":
-			return Color["bright_green"] + Color["bold"], Icons["package.json"]
-		case "tailwind.config.js", "tailwind.config.ts":
-			return Color["bright_blue"], Icons["tailwind"]
-		case "vue.config.js":
-			return Color["bright_blue"], Icons["vue.config.js"]	
-		case ".eslintrc.js", ".eslintrc.json", ".eslintrc.yml", ".eslintrc.yaml":
-			return Color["bright_blue"], Icons["eslint"]
+	case "go.mod", "go.sum":
+		return Color["cyan"], Icons["go.mod"]
+	case "package.json":
+		return Color["bright_green"] + Color["bold"], Icons["package.json"]
+	case "tailwind.config.js", "tailwind.config.ts":
+		return Color["bright_blue"], Icons["tailwind"]
+	case "vue.config.js":
+		return Color["bright_blue"], Icons["vue.config.js"]
+	case ".eslintrc.js", ".eslintrc.json", ".eslintrc.yml", ".eslintrc.yaml":
+		return Color["bright_blue"], Icons["eslint"]
 	}
-	// Check if we have a direct icon match for this extension
+	// Check for a direct icon match
 	if icon, exists := Icons[ext]; exists {
-		// Return with appropriate color based on file category
 		return getColorForFileType(ext), icon
 	}
 
-	// If no direct match, use default icon
 	return Color["dim"], Icons["default"]
 }
 
-// getColorForFileType returns an appropriate color for a file extension
 func getColorForFileType(ext string) string {
-	// Map file categories to colors
 	switch {
 	// Programming languages
 	case isInList(ext, []string{".asm", ".go", ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".c", ".o", ".cpp", ".cs",
@@ -239,7 +233,7 @@ func getColorForFileType(ext string) string {
 		case ".log":
 			return Color["cyan"]
 		case ".ipynb":
-			return Color["yellow"] + Color["bold"] 
+			return Color["yellow"] + Color["bold"]
 		default:
 			return Color["white"]
 		}
@@ -280,7 +274,7 @@ func isInList(item string, list []string) bool {
 	return false
 }
 
-// truncateString safely truncates a string to the given width, respecting UTF-8 characters
+// safely truncates a string to the given width, respecting UTF-8 characters
 func truncateString(s string, maxWidth int) string {
 	if utf8.RuneCountInString(s) <= maxWidth {
 		return s

@@ -19,7 +19,7 @@ func main() {
 	// Determine the path to process - use the first non-flag argument if it exists
 	// otherwise use the current directory
 	var path string
-	if len(remainingArgs) > 1 { // Skip program name (index 0)
+	if len(remainingArgs) > 1 {
 		path = remainingArgs[1]
 	} else {
 		path = "."
@@ -63,20 +63,15 @@ func processPath(pattern string, flags Flags) {
 	// Check if the file exists
 	_, err := os.Stat(pattern)
 	if err == nil {
-		// If exists, print it
 		printFile(pattern, flags)
 		return
 	} else if os.IsNotExist(err) {
-		// If doesn't exist
 		fmt.Println("Error: No such file or directory:", pattern)
 		return
 	} else {
-		// Some other error
 		log.Fatal(err)
 	}
 
-	// If none of the above, and it's not an existing directory,
-	// it might be an invalid path
 	fmt.Println("Error: No such file or directory:", pattern)
 }
 
@@ -116,7 +111,7 @@ func printDirectoryContents(dirPath string, flags Flags) {
 
 	fileInfos := make([]os.FileInfo, 0)
 	for _, entry := range dirEntries {
-		// Skip dotfiles - files that start with a dot - unless -a flag is set
+		// Skip dotfiles - unless -a flag is set
 		if strings.HasPrefix(entry.Name(), ".") && !flags.AllFiles {
 			continue
 		}
@@ -133,6 +128,5 @@ func printDirectoryContents(dirPath string, flags Flags) {
 		columns = 1
 	}
 
-	// Make sure to pass the flags
 	PrintFilesInColumns(fileInfos, columns, flags)
 }
