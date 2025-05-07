@@ -13,3 +13,4 @@ One of the main reasons and feature of this rewrite is the icon support in files
 
 ## Demo
 
+https://github.com/user-attachments/assets/bdae9de0-f17e-4d00-a713-a0298581861e
